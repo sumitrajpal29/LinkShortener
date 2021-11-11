@@ -6,7 +6,7 @@ const shortySchema=new mongoose.Schema({
     type: String,
     required:true
   },
-  short:{
+  shortUrl:{
     type:String,
     default:shortId.generate
   },

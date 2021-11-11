@@ -2,7 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const ejs = require('ejs')
 const bodyParser = require('body-parser')
-const shorty=require("./models/shorty")
+const short=require("./models/shorty")
 
 const app = express()
 
@@ -14,14 +14,21 @@ app.listen(3000,function(){
   console.log("App is running on port 3000.")
 })
 
-mongoose.connect("mongodb://localhost/27017",{useNewUrlParser:true,useUnifiedTopology:true})
+mongoose.connect("mongodb://localhost/shortyDB",{useNewUrlParser:true,useUnifiedTopology:true})
+
+let shortyword=null
 
 app.get("/",  function(req,res){
-  const shortUrl =  shorty.find()
-  res.render("indexD",{shortUrls:shortUrl})
+  res.render("indexD",{shortUrl:shortyword})
 })
 
 app.post("/shortUrl", function(req,res){
-   shorty.create({full:req.body.fullUrl})
+   const url=short.findOne({full:req.body.fullUrl},function(err,found){
+     if(found)
+     shortyword=found.shortUrl
+     else
+     short.create({full:req.body.fullUrl})
+   })
+   console.log(shortyword)
   res.redirect("/")
 })

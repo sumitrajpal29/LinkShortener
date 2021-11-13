@@ -18,17 +18,38 @@ mongoose.connect("mongodb://localhost/shortyDB",{useNewUrlParser:true,useUnified
 
 let shortyword=null
 
-app.get("/",  function(req,res){
+app.get("/",  (req,res)=>{
   res.render("indexD",{shortUrl:shortyword})
 })
 
-app.post("/shortUrl", function(req,res){
-   const url=short.findOne({full:req.body.fullUrl},function(err,found){
-     if(found)
-     shortyword=found.shortUrl
-     else
-     short.create({full:req.body.fullUrl})
-   })
-   console.log(shortyword)
+app.post("/shortUrl", async (req,res)=>{
+  const URL=req.body.fullUrl
+  console.log(URL);
+  await searchOrCreate(URL)
   res.redirect("/")
+})
+
+function searchOrCreate(URL){
+  short.findOne({full:URL},async (err,found)=>{
+    if(found){
+      shortyword=found.shortUrl
+      console.log(shortyword)
+    }
+    else{
+    await short.create({full:URL})
+      searchOrCreate(URL)
+    }
+  })
+}
+
+
+
+app.get("/:shortUr",(req,res)=>{
+  short.findOne({shortUrl:req.params.shortUr},(err,found)=>{
+    if(found){
+      res.redirect(found.full)
+    }
+    else
+      res.sendStatus(404)
+  })
 })

@@ -19,7 +19,7 @@ mongoose.connect("mongodb://localhost/shortyDB",{useNewUrlParser:true,useUnified
 let shortyword=null
 
 app.get("/",  (req,res)=>{
-  res.render("indexD",{shortUrl:shortyword})
+  res.render("indexD",{shortUrl:"localhost:3000/"+shortyword})
 })
 
 app.post("/shortUrl", async (req,res)=>{

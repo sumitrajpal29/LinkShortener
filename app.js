@@ -2,7 +2,9 @@ const express = require('express')
 const mongoose = require('mongoose')
 const ejs = require('ejs')
 const bodyParser = require('body-parser')
-const short=require("./models/shorty")
+const shortLink=require("./models/shorty")
+const shortId=require("shortid")
+const urlExist=require("url-exists")
 
 const app = express()
 
@@ -16,36 +18,47 @@ app.listen(3000,function(){
 
 mongoose.connect("mongodb://localhost/shortyDB",{useNewUrlParser:true,useUnifiedTopology:true})
 
-let shortyword=null
 
-app.get("/",  (req,res)=>{
-  res.render("indexD",{shortUrl:"localhost:3000/"+shortyword})
-})
 
 app.post("/shortUrl", async (req,res)=>{
   const URL=req.body.fullUrl
   console.log(URL);
-  await searchOrCreate(URL)
-  res.redirect("/")
+    shortLink.findOne({full:URL},async (err,found)=>{
+      if(found){
+        res.render("indexD",{shortUrl:"localhost:3000/"+found.shortUrl,VALID:true})
+        console.log("Already shorted : "+found.shortUrl)
+      }
+      else if(!found){
+        const exists=await urlExist(URL,async (err,found)=>{
+          console.log(found);
+          if(found){
+            valid=true
+            const url = new shortLink({full:URL,shortUrl:shortId.generate()})
+            await url.save()
+            console.log(url.shortUrl)
+            res.render("indexD",{shortUrl:"localhost:3000/"+url.shortUrl,VALID:true})
+          }
+          else if(!found){
+            valid=false
+            res.render("indexD",{shortUrl:"localhost:3000/null",VALID:false})
+            console.log("not found");
+          }
+          else
+          console.log(err);
+        })
+      }
+      else
+      console.log(err);
+    })
 })
 
-function searchOrCreate(URL){
-  short.findOne({full:URL},async (err,found)=>{
-    if(found){
-      shortyword=found.shortUrl
-      console.log(shortyword)
-    }
-    else{
-    await short.create({full:URL})
-      searchOrCreate(URL)
-    }
-  })
-}
 
-
+app.get("/",  (req,res)=>{
+  res.render("indexD",{shortUrl:"localhost:3000/null",VALID:true})
+})
 
 app.get("/:shortUr",(req,res)=>{
-  short.findOne({shortUrl:req.params.shortUr},(err,found)=>{
+  shortLink.findOne({shortUrl:req.params.shortUr},(err,found)=>{
     if(found){
       res.redirect(found.full)
     }

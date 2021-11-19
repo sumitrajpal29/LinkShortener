@@ -1,5 +1,4 @@
 const mongoose=require("mongoose")
-const shortId=require("shortid")
 
 const shortySchema=new mongoose.Schema({
   full:{
@@ -8,7 +7,7 @@ const shortySchema=new mongoose.Schema({
   },
   shortUrl:{
     type:String,
-    default:shortId.generate
+    required:true
   },
   clicks:{
     type:Number,

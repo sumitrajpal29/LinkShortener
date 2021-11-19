@@ -1,9 +1,28 @@
 div{
   align-items: center;
   text-align: center;
-  background-color: yellow;
+  background-color: #defabb;
 }
 h1{
-  color:blue;
+  color:#5F02EE;
   font-family: cursive;
+}
+input{
+  border-radius: 10rem;
+  border: none
+}
+
+.Button{
+  background-color: #d602ee;
+}
+
+#shortedLink{
+  color:green;
+  border: none;
+  border-radius: 40rem;
+  background-color: lightGrey
+}
+
+#shortedLink::selection{
+  background-color:white;
 }

@@ -8,7 +8,6 @@ function copy(){
 
   navigator.clipboard.writeText(text.value)
 
-  alert("Copied the short link")
-  console.log("clicked");
+  console.log("copied");
 
 }
